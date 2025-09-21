@@ -38,30 +38,47 @@
 // export default api;
 import axios from "axios";
 
+// Create an axios instance with base URL and credentials settings
 const api = axios.create({
-  baseURL: "http://localhost:8000/api",
+  baseURL: "http://localhost:8000",
   withCredentials: true,
-  withXSRFToken: true,
+  // As of Axios v1.x, withXSRFToken: true handles this.
+   withXSRFToken: true,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
 });
 
+// A utility function to fetch the CSRF cookie
+export const getCsrfCookie = async () => {
+  try {
+    await api.get("/sanctum/csrf-cookie");
+  } catch (error) {
+    console.error("Failed to fetch CSRF cookie:", error);
+  }
+};
+
 // Login
 export const loginUser = async (data) => {
-  return api.post("/login", data);
+  // Wait for the cookie to be set before sending the POST request
+  await getCsrfCookie();
+  return api.post("api/login", data);
 };
 
 // Register
 export const registerUser = async (data) => {
-  return api.post("/register", data);
+  // Wait for the cookie to be set before sending the POST request
+  await getCsrfCookie();
+  return api.post("api/register", data);
 };
 
 // Logout
 export const logoutUser = async (token) => {
+  // Wait for the cookie to be set before sending the POST request
+  await getCsrfCookie();
   return api.post(
-    "/logout",
+    "api/logout",
     {},
     {
       headers: {
@@ -71,10 +88,12 @@ export const logoutUser = async (token) => {
   );
 };
 
-// Get authenticated user
+// Get authenticated user (GET requests do not need the CSRF cookie)
 export const getUser = async (token) => {
-  return api.get("/user", {
+  return api.get("api/user", {
     headers: { Authorization: `Bearer ${token}` }
   });
 };
+
 export default api;
+

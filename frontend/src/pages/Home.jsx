@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
+    
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
+      
+
       {/* Hero Section */}
       <h1 className="text-4xl md:text-5xl font-bold text-indigo-600 mb-4">
         Welcome to StyleShop
